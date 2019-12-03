@@ -2,7 +2,8 @@ function [source_face, source_vertex, flat_source_vertex, source_intensity,...
     target_face, target_vertex, flat_target_vertex, target_intensity,...
     landmark_source_index, landmark_target_index, landmark_target_pos,...
     L, V2Fm, F2Vm,...
-    source_boundary_index, target_boundary_index] = data_mesh_preprocess(source_obj, target_obj, save_flag, varargin)
+    source_boundary_index, target_boundary_index] = data_mesh_preprocess(source_obj, target_obj,...
+    source_name, target_name,save_flag, varargin)
 
 disp('loading obj files ...\n')
 [source_face, source_vertex, ~, source_mean_curvature] = load_shape_obj(source_obj);
@@ -63,7 +64,7 @@ subplot(2,2,4); gpp_plot_mesh(target_face, flat_target_vertex, target_intensity)
 hold on; plot(flat_target_vertex(landmark_target_index,1), flat_target_vertex(landmark_target_index,2), 'ro'); hold off;
 
 if save_flag == 1
-    file_name = sprintf('%s_%s_%s_workspace.mat', datestr(now,'mm-dd-yyyy HH-MM'), source_obj, target_obj);
+    file_name = sprintf('%s_%s_%s_workspace.mat', datestr(now,'mm-dd-yyyy HH-MM'), source_name, target_name);
     save(file_name);
     fprintf('Workspaced saved as %s \n', file_name);
 end
