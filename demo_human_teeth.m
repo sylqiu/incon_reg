@@ -1,26 +1,21 @@
-%% read obj files
-clear; clc; close all;
+clc; close all;
+% prefix = './data/';
+% source_name = 'test_right_0.obj';
+% target_name = 'test_left_0.obj';
+% 
+% source_obj_path = [prefix source_name];
+% target_obj_path = [prefix target_name];
+% save_flag = 1;
+% 
+% [source_face, source_vertex, flat_source_vertex, source_intensity,...
+%     target_face, target_vertex, flat_target_vertex, target_intensity,...
+%     landmark_source_index, landmark_target_index, landmark_target_pos,...
+%     L, V2Fm, F2Vm,...
+%     source_boundary_index, target_boundary_index] =...
+%     data_mesh_preprocess(source_obj_path, target_obj_path,...
+%                             source_name, target_name, save_flag);
+load('12-09-2019 22-46_test_right_0.obj_test_left_0.obj_workspace.mat');
 %%
-prefix = './data/';
-source_name = 'MN-Rio-7724_M1223_aligned.obj';
-target_name = 'AMNH-M-38792_M904_aligned.obj';
-source_obj_path = [prefix source_name];
-target_obj_path = [prefix target_name];
-save_flag = 1;
-
-[source_face, source_vertex, flat_source_vertex, source_intensity,...
-    target_face, target_vertex, flat_target_vertex, target_intensity,...
-    landmark_source_index, landmark_target_index, landmark_target_pos,...
-    L, V2Fm, F2Vm,...
-    source_boundary_index, target_boundary_index] =...
-    data_mesh_preprocess(source_obj_path, target_obj_path,...
-                            source_name, target_name, save_flag
-);
-%%
-% optionally you could load a previously saved workspace
-% load('11-28-2019 21-20_MN-Rio-7724_M1223_aligned.obj_AMNH-M-38792_M904_aligned.obj_workspace.mat');
-%% perform registration
-% set params
 clc;
 param.UpperBound = 1.5;
 param.LowerBound = 0.8;
@@ -28,7 +23,7 @@ param.alpha = 0.01;
 param.beta = 0.1;
 param.smooth_iter = 3;
 param.intensity_iter = 1;
-param.demons_iter = 5;
+param.demons_iter = 1;
 param.demons_stepsize = 1;
 param.landmark_iter = 1;
 param.overall_iter = 30;
@@ -53,6 +48,7 @@ for iter = 1:param.overall_iter
 end
 % algo ends
 %%
+close all
 result_show_3D(source_face, source_vertex, flat_source_vertex, source_vertex_reg,...
                     target_face, target_vertex, flat_target_vertex,...
                     source_intensity, target_intensity,...

@@ -56,27 +56,20 @@ hold off;
 figure(3);
 % diff_ = abs(source_intensity - target_intensity_reg);
 diff_ = dist_3D;
-subplot(2,2,1); gpp_plot_mesh(source_face_reg, source_vertex, diff_); colormap parula; title('Registered w/ displacement mag');
+subplot(2,2,1); gpp_plot_mesh(source_face_reg, source_vertex, diff_); colormap parula; title('Registered w/ intensity difference');
 subplot(2,2,4); gpp_plot_mesh(target_face, target_vertex, target_intensity); colormap parula; title('Target');
 subplot(2,2,3); gpp_plot_mesh(source_face, source_vertex, source_intensity); colormap parula; title('Source');
 subplot(2,2,2); gpp_plot_mesh(source_face, source_vertex, correspondence_mask); colormap parula; title('Correspondence region');
 
-figure(4);
-% subplot(1,2,2); 
-hold on;
-gpp_plot_mesh(target_face, target_vertex, target_intensity, 'EdgeAlpha', 0.2); colormap parula; 
+figure(4);hold on;
+gpp_plot_mesh(target_face, target_vertex, target_intensity, 'FaceAlpha', 0.2); colormap parula; 
 gpp_plot_mesh(source_face_reg, source_vertex, source_intensity); colormap parula;
 sub_ind = source_vertex_reg_intersect_index(1:18:end);
 quiver3(source_vertex(sub_ind,1), source_vertex(sub_ind,2), source_vertex(sub_ind,3),...
     displace_3D(sub_ind,1), displace_3D(sub_ind,2), displace_3D(sub_ind,3),0, 'Color',...
     [216,108,112]/255, 'LineWidth', 0.2,...
-    'MaxHeadSize', 0.05); colorbar;
-hold off; title('Displacement field visualization');
-figure(5);
-% subplot(1,2,1); 
-gpp_plot_mesh(source_face_reg, source_vertex, abs(source_intensity - target_intensity_reg)); colormap parula; title('Registered w/ curvature diff');
-
-
+    'MaxHeadSize', 0.05);
+hold off
 
 
 end

@@ -20,19 +20,19 @@ source_vertex_reg = source_vertex_reg_pre;
 iter = 0;
 while iter < ITER
         
-        [Txg,Tyg] = intensity_fitting(source_intensity_grid, target_intensity_grid, SUB_ITER);
+        [Txg,Tyg] = intensity_fitting(source_intensity_grid, target_intensity_grid, SUB_ITER, STEP_SIZE);
         Txg = Txg.*mask; Tyg = Tyg.*mask;
         Tx = griddata(g1(:), g2(:), Txg(:), source_vertex_reg(:,1), source_vertex_reg(:,2));
         Ty = griddata(g1(:), g2(:), Tyg(:), source_vertex_reg(:,1), source_vertex_reg(:,2));
         Tx(isnan(Tx)) = 0; 
         Ty(isnan(Ty)) = 0; 
-        boundary_pos = source_vertex_reg + 0.1*STEP_SIZE*[-Tx,Ty]; 
+        boundary_pos = source_vertex_reg + 0.8*[-Tx,Ty]; 
         boundary_pos = boundary_pos(source_boundary_index, 1:2);
-        source_vertex_reg = source_vertex_reg + STEP_SIZE*[-Tx,Ty]; 
+        source_vertex_reg = source_vertex_reg + [-Tx,Ty]; 
                 
         nu = compute_bc(source_face, source_vertex, source_vertex_reg, 2);        
         nu(abs(nu)>1) = 0;
-        nu = heat_flow(nu,F2Vm,V2Fm,L,SMOOTH_ITER,ALPHA,BETA);
+%         nu = heat_flow(nu,F2Vm,V2Fm,L,SMOOTH_ITER,ALPHA,BETA);
                 
         source_vertex_reg = lsqc_solver(source_face, source_vertex, nu,...
                     source_boundary_index, boundary_pos);  

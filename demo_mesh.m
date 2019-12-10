@@ -24,15 +24,15 @@ save_flag = 1;
 %% perform registration
 % set params
 clc;
-param.UpperBound = 2;
+param.UpperBound = 1.3;
 param.LowerBound = 0.7;
 param.alpha = 0.01;
 param.beta = 0.1;
-param.smooth_iter = 5;
+param.smooth_iter = 3;
 param.intensity_iter = 1;
 param.demons_iter = 2;
 param.demons_stepsize = 1;
-param.landmark_iter = 2;
+param.landmark_iter = 1;
 param.overall_iter = 30;
 % algo begins
 source_vertex_reg_pre = flat_source_vertex;

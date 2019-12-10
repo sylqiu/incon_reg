@@ -9,8 +9,11 @@ disp('loading obj files ...\n')
 [source_face, source_vertex, ~, source_mean_curvature] = load_shape_obj(source_obj);
 [target_face, target_vertex, ~, target_mean_curvature] = load_shape_obj(target_obj);
 disp('loading finished, here using mean curvature as matching intensity, and are normalized to be in range [0,1] \n')
-source_intensity = intensity_normalization(source_mean_curvature);
-target_intensity = intensity_normalization(target_mean_curvature);
+[target_intensity, min_, max_] = intensity_normalization(target_mean_curvature);
+source_intensity = intensity_normalization(source_mean_curvature, min_, max_);
+
+% source_intensity = segment_mesh_by_intensity(source_intensity) .* source_intensity;
+% target_intensity = segment_mesh_by_intensity(target_intensity) .* target_intensity;
 if size(varargin) == 0
     disp('Choose landmark by hand \n');
     [landmark_source_index, landmark_target_index] = select_landmark(source_face, source_vertex,...

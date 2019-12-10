@@ -1,9 +1,10 @@
-function [Tx,Ty] =  intensity_fitting(M,S,Niter)
+function [Tx,Ty] =  intensity_fitting(M,S,Niter,step_size)
 % assume S is already interpolated to the correct grid
 alpha=3;
 Tx=zeros(size(S)); Ty=zeros(size(S));
 [Sx,Sy] = gradient(S);
 Hsmooth=fspecial('gaussian',[60 60],10);
+
 initial_M = M;
 % imshow(M);
 for itt=1:Niter
@@ -24,6 +25,8 @@ for itt=1:Niter
     
         % When divided by zero
         Ux(isnan(Ux))=0; Uy(isnan(Uy))=0;
+        Ux(abs(Ux)<0.001) = 0;Ux(abs(Uy)<0.001) = 0;
+        Ux(abs(Ux)>0.1) = 0;Ux(abs(Uy)>0.1) = 0;
 
         % Smooth the transformation field
         Uxs=imfilter(Ux,Hsmooth);
@@ -31,15 +34,15 @@ for itt=1:Niter
 
 %         figure(15);quiver(x(1:16:end),y(1:16:end),Uxs(1:16:end),Uys(1:16:end));drawnow;
         % Add the new transformation field to the total transformation field.
-        Tx=Tx+Uxs;
-        Ty=Ty+Uys;
+        Tx=Tx+step_size*Uxs;
+        Ty=Ty+step_size*Uys;
 %         M=movepixels(M1,Ty,Tx);
         D(:,:,1) = Tx;
         D(:,:,2) = Ty;
         M = imwarp(initial_M,D);
 
         figure(20);
-%             plot(V_m(:,1)+Tx,V_m(:,2)+Ty,'.');
+%             plot(Tx,Ty,'.');
         subplot(1,2,1);imshow(M,'InitialMagnification', 800); title('Source intensity')
         subplot(1,2,2);imshow(S,'InitialMagnification', 800); title('Target intensity')
         drawnow;        
