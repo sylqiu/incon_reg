@@ -1,4 +1,4 @@
-function [Tx,Ty] =  intensity_fitting(M,S,Niter,step_size)
+function [Tx,Ty] =  intensity_fitting(M,S,Niter,step_size, scale)
 % assume S is already interpolated to the correct grid
 alpha=3;
 Tx=zeros(size(S)); Ty=zeros(size(S));
@@ -25,8 +25,8 @@ for itt=1:Niter
     
         % When divided by zero
         Ux(isnan(Ux))=0; Uy(isnan(Uy))=0;
-        Ux(abs(Ux)<0.001) = 0;Ux(abs(Uy)<0.001) = 0;
-        Ux(abs(Ux)>0.1) = 0;Ux(abs(Uy)>0.1) = 0;
+%         Ux(abs(Ux)<0.001) = 0;Ux(abs(Uy)<0.001) = 0;
+%         Ux(abs(Ux)>0.1) = 0;Ux(abs(Uy)>0.1) = 0;
 
         % Smooth the transformation field
         Uxs=imfilter(Ux,Hsmooth);
@@ -47,5 +47,7 @@ for itt=1:Niter
         subplot(1,2,2);imshow(S,'InitialMagnification', 800); title('Target intensity')
         drawnow;        
 end
-
+% rescale to correct size
+Tx = Tx * scale;
+Ty = Ty *scale;
 end

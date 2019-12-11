@@ -1,4 +1,4 @@
-function [g3,g4,Mg,Sg,mask] = combine_to_same_grid(source_vertex, source_intensity, ...
+function [g3,g4,Mg,Sg,mask,scale] = combine_to_same_grid(source_vertex, source_intensity, ...
                                 target_vertex, target_intensity,...
                                 source_boundary_index, target_boundary_index)
 %output Mg and Sg defined one the grid [g3,g4]
@@ -9,10 +9,13 @@ sx = max(target_vertex(:,1)) - min(target_vertex(:,1));
 sy = max(target_vertex(:,2)) - min(target_vertex(:,2));
 r = sx/sy; N = round(sqrt(size(target_vertex,1)));
 [g4,g3] = ndgrid(1*N:-0.4:0, 0:0.4:1*round(r*N)); %natural ordering
+
 %scale and translate the grid
 g4 = g4/N*sy; g3 = g3/r/N*sx;
 g4 = g4 + min(target_vertex(:,2)); 
 g3 = g3 + min(target_vertex(:,1));
+
+scale = abs((g4(end) - g4(1)) / size(g4,2));
 Ftmp = delaunay(g3(:),g4(:));
 L = cotmatrix([g3(:),g4(:)],Ftmp);
 % interpolating to [g3,g4]

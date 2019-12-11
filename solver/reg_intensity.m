@@ -13,15 +13,16 @@ BETA = param.beta; %smoothing step
 source_vertex_reg = source_vertex_reg_pre;
 
     
-[g1, g2, source_intensity_grid, target_intensity_grid, mask] = combine_to_same_grid(...
+[g1, g2, source_intensity_grid, target_intensity_grid, mask, scale] = combine_to_same_grid(...
                                         source_vertex_reg, source_intensity,...
                                         target_vertex, target_intensity,...
                                         source_boundary_index, target_boundary_index);  
 iter = 0;
+
 while iter < ITER
         
-        [Txg,Tyg] = intensity_fitting(source_intensity_grid, target_intensity_grid, SUB_ITER, STEP_SIZE);
-        Txg = Txg.*mask; Tyg = Tyg.*mask;
+        [Txg,Tyg] = intensity_fitting(source_intensity_grid, target_intensity_grid, SUB_ITER, STEP_SIZE, scale);
+%         Txg = Txg.*mask; Tyg = Tyg.*mask;
         Tx = griddata(g1(:), g2(:), Txg(:), source_vertex_reg(:,1), source_vertex_reg(:,2));
         Ty = griddata(g1(:), g2(:), Tyg(:), source_vertex_reg(:,1), source_vertex_reg(:,2));
         Tx(isnan(Tx)) = 0; 

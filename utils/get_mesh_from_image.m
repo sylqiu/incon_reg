@@ -1,5 +1,8 @@
 function [face, vertex, intensity] = get_mesh_from_image(image_path, num_p_x)
 I = im2double(imread(image_path));
+if length(size(I)) == 3
+   I = mean(I, 3); 
+end
 [H, W] = size(I, 1, 2);
 num_p_y = round(num_p_x * (H-1) / (W-1))+1;
 [y_ind, x_ind] = ndgrid(linspace(1, H, num_p_y),...
