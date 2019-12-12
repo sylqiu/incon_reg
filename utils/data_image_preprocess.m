@@ -29,7 +29,7 @@ assert(length(landmark_source_index) == length(landmark_target_index), ...
     'number of landmarks must equal');
 
 num_landmark = length(landmark_source_index);
-fprintf('Number of landmarks %d', num_landmark);
+fprintf('Number of landmarks %d \n', num_landmark);
 landmark_target_pos = flat_target_vertex(landmark_target_index,1:2);
 % build laplacian of the source domain for coefficient smoothing
 L = cotmatrix(source_vertex, source_face);

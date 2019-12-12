@@ -1,23 +1,36 @@
-clc; close all;
-% prefix = './data/';
-% source_name = 'brain_T1_wave_part.png';
-% target_name = 'brain_T1_part.png';
-% 
-% 
-% source_obj_path = [prefix source_name];
-% target_obj_path = [prefix target_name];
-% save_flag = 1;
-% landmark_source_index = [5556,1113,5946,4242,7293];
-% landmark_target_index = [10850,5591,10760,7040,10807];
-% [source_face, source_vertex, flat_source_vertex, source_intensity,...
-%     target_face, target_vertex, flat_target_vertex, target_intensity,...
-%     landmark_source_index, landmark_target_index, landmark_target_pos,...
-%     L, V2Fm, F2Vm,...
-%     source_boundary_index, target_boundary_index] =...
-%     data_image_preprocess(source_obj_path, target_obj_path,...
-%                             source_name, target_name, save_flag,...
-%                             landmark_source_index, landmark_target_index);
-% load('12-10-2019 16-46_brain_T1_wave_part.png_brain_T1_part.png_workspace.mat');
+clc; close all; clear;
+load('data/QCIR_Bigcircle_example.mat');
+save_flag = 0;
+%
+[source_face, source_vertex, source_intensity] = get_mesh_from_image(moving, 100);
+[target_face, target_vertex, target_intensity] = get_mesh_from_image(static, 100);
+flat_source_vertex = source_vertex;
+flat_target_vertex = target_vertex;
+landmark = imgcoord(moving, landmark) / 200;
+target = imgcoord(static, target)/ 200;
+landmark_source_index = findclstpt(source_vertex, landmark)';
+landmark_target_index = findclstpt(target_vertex, target)';
+num_landmark = length(landmark_source_index);
+fprintf('Number of landmarks %d', num_landmark);
+landmark_target_pos = flat_target_vertex(landmark_target_index,1:2);
+% build laplacian of the source domain for coefficient smoothing
+L = cotmatrix(source_vertex, source_face);
+F2Vm = F2V(source_vertex', source_face');
+V2Fm = V2F(source_vertex', source_face');
+% assume one boundary component                           
+[~, source_boundary_index] = meshboundaries(source_face);
+[~, target_boundary_index] = meshboundaries(target_face);
+% save workspace for later use
+figure(1);
+subplot(1,2,1); gpp_plot_mesh(source_face, source_vertex, source_intensity); colormap parula; title('Source');
+hold on; plot(source_vertex(landmark_source_index,1), source_vertex(landmark_source_index,2), 'ro'); hold off;
+subplot(1,2,2); gpp_plot_mesh(target_face, target_vertex, target_intensity); colormap parula; title('Target');
+hold on; plot(target_vertex(landmark_target_index,1), target_vertex(landmark_target_index,2), 'ro'); hold off;
+if save_flag == 1
+    file_name = sprintf('%s_%s_%s_workspace.mat', datestr(now,'mm-dd-yyyy HH-MM'), source_name, target_name);
+    save(file_name);
+    fprintf('Workspaced saved as %s \n', file_name);
+end
 %%
 clc;
 param.UpperBound = 1.5;

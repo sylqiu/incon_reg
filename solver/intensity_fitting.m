@@ -3,7 +3,7 @@ function [Tx,Ty] =  intensity_fitting(M,S,Niter,step_size, scale)
 alpha=3;
 Tx=zeros(size(S)); Ty=zeros(size(S));
 [Sx,Sy] = gradient(S);
-Hsmooth=fspecial('gaussian',[60 60],10);
+Hsmooth=fspecial('gaussian',[60, 60],6);
 
 initial_M = M;
 % imshow(M);

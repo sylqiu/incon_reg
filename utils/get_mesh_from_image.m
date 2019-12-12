@@ -1,5 +1,8 @@
 function [face, vertex, intensity] = get_mesh_from_image(image_path, num_p_x)
-I = im2double(imread(image_path));
+if isstring(image_path)
+    I = im2double(imread(image_path));
+else
+    I = image_path;
 if length(size(I)) == 3
    I = mean(I, 3); 
 end

@@ -24,9 +24,9 @@ param.beta = 0.1;
 param.smooth_iter = 3;
 param.intensity_iter = 1;
 param.demons_iter = 1;
-param.demons_stepsize = 1;
+param.demons_stepsize = 5;
 param.landmark_iter = 1;
-param.overall_iter = 30;
+param.overall_iter = 20;
 % algo begins
 source_vertex_reg_pre = flat_source_vertex;
 for iter = 1:param.overall_iter
@@ -48,8 +48,26 @@ for iter = 1:param.overall_iter
 end
 % algo ends
 %%
-close all
+[source_vertex_reg_intersect_index, correspondence_mask, ...
+    source_vertex_reg_3D, source_face_reg, displace, dist,...
+    target_intensity_reg, intensity_diff] = ...
+    prepare_result(source_face, source_vertex, source_vertex_reg,...
+                    target_face, target_vertex, flat_target_vertex,...
+                    source_intensity, target_intensity);
+if save_flag == 1
+    file_name = sprintf('%s_%s_%s_results.mat', datestr(now,'mm-dd-yyyy HH-MM'), source_name, target_name);
+    save(file_name);
+    fprintf('Results saved !\n')
+end
+%%
+clc; close all; 
+load('12-12-2019 11-43_test_right_0.obj_test_left_0.obj_results.mat');
 result_show_3D(source_face, source_vertex, flat_source_vertex, source_vertex_reg,...
                     target_face, target_vertex, flat_target_vertex,...
                     source_intensity, target_intensity,...
-                    landmark_source_index, landmark_target_index)
+                    landmark_source_index, landmark_target_index,...
+                    source_vertex_reg_intersect_index, correspondence_mask, ...
+                    source_vertex_reg_3D, source_face_reg, displace, dist,...
+                    target_intensity_reg, intensity_diff);
+
+

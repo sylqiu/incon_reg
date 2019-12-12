@@ -27,7 +27,7 @@ while iter < ITER
         Ty = griddata(g1(:), g2(:), Tyg(:), source_vertex_reg(:,1), source_vertex_reg(:,2));
         Tx(isnan(Tx)) = 0; 
         Ty(isnan(Ty)) = 0; 
-        boundary_pos = source_vertex_reg + 0.8*[-Tx,Ty]; 
+        boundary_pos = source_vertex_reg + [-Tx,Ty]; 
         boundary_pos = boundary_pos(source_boundary_index, 1:2);
         source_vertex_reg = source_vertex_reg + [-Tx,Ty]; 
                 
