@@ -1,4 +1,4 @@
-function source_vertex_reg = reg_intensity(source_face, source_vertex, source_vertex_reg_pre,...
+function [source_vertex_reg, intensity_err] = reg_intensity(source_face, source_vertex, source_vertex_reg_pre,...
                                 source_intensity, target_vertex, target_intensity,...
                                 source_boundary_index, target_boundary_index,...
                                 F2Vm, V2Fm, L, param)
@@ -21,7 +21,7 @@ iter = 0;
 
 while iter < ITER
         
-        [Txg,Tyg] = intensity_fitting(source_intensity_grid, target_intensity_grid, SUB_ITER, STEP_SIZE, scale);
+        [Txg,Tyg,intensity_err] = intensity_fitting(source_intensity_grid, target_intensity_grid, SUB_ITER, STEP_SIZE, scale);
 %         Txg = Txg.*mask; Tyg = Tyg.*mask;
         Tx = griddata(g1(:), g2(:), Txg(:), source_vertex_reg(:,1), source_vertex_reg(:,2));
         Ty = griddata(g1(:), g2(:), Tyg(:), source_vertex_reg(:,1), source_vertex_reg(:,2));

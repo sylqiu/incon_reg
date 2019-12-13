@@ -1,4 +1,4 @@
-clc; close all;
+clc; close all; clear;
 % prefix = './data/';
 % source_name = 'test_right_0.obj';
 % target_name = 'test_left_0.obj';
@@ -14,20 +14,32 @@ clc; close all;
 %     source_boundary_index, target_boundary_index] =...
 %     data_mesh_preprocess(source_obj_path, target_obj_path,...
 %                             source_name, target_name, save_flag);
-load('12-09-2019 22-46_test_right_0.obj_test_left_0.obj_workspace.mat');
-%%
-clc;
+load('12-09-2019 22-46_test_right_0.obj_test_left_0.obj_workspace_5landmark.mat');
+%
+initial_landmark_error = compute_landamrk_err(flat_source_vertex, landmark_source_index,...
+    landmark_target_pos);
+[~,~,source_intensity_grid, target_intensity_grid, ~,~] = combine_to_same_grid(...
+                                        flat_source_vertex, source_intensity,...
+                                        flat_target_vertex, target_intensity,...
+                                        source_boundary_index, target_boundary_index);
+initial_intensity_error = sum(abs(source_intensity_grid(:) - target_intensity_grid(:)));
+
 param.UpperBound = 1.5;
 param.LowerBound = 0.8;
 param.alpha = 0.01;
 param.beta = 0.1;
 param.smooth_iter = 3;
 param.intensity_iter = 1;
-param.demons_iter = 1;
-param.demons_stepsize = 5;
+param.demons_iter = 1; % turn higher if you want stronger intensity matching
+param.demons_stepsize = 5;% turn higher if you want stronger intensity matching
 param.landmark_iter = 1;
 param.overall_iter = 20;
+
 % algo begins
+landmark_err = [initial_landmark_error];
+intensity_err = [initial_intensity_error];
+fprintf('L1 norm intensity difference % f ', initial_intensity_error);
+fprintf('Eulidean landmark difference % f \n', initial_landmark_error);
 source_vertex_reg_pre = flat_source_vertex;
 for iter = 1:param.overall_iter
     fprintf('Iter %d \n', iter);
@@ -38,12 +50,21 @@ for iter = 1:param.overall_iter
         figure(21); gpp_plot_mesh(source_face, source_vertex_reg_pre); title('Landmark matching step');
         drawnow;
     end
-    source_vertex_reg = reg_intensity(source_face, flat_source_vertex, source_vertex_reg_pre,...
+    [source_vertex_reg, ie] = reg_intensity(source_face, flat_source_vertex, source_vertex_reg_pre,...
                                 source_intensity, flat_target_vertex, target_intensity,...
                                 source_boundary_index, target_boundary_index,...
                                 F2Vm, V2Fm, L, param);
     figure(31); gpp_plot_mesh(source_face, source_vertex_reg); title('Intensity matching step');
     drawnow;
+    % calculate the landmark and intensity difference
+    le = compute_landamrk_err(source_vertex_reg, ...
+                        landmark_source_index,...
+                        landmark_target_pos);
+    fprintf('L1 norm intensity difference % f ', ie);
+    fprintf('Eulidean landmark difference % f \n', le);
+    landmark_err = [landmark_err, le];
+    intensity_err = [intensity_err, ie];
+    %
     source_vertex_reg_pre = source_vertex_reg;
 end
 % algo ends
@@ -55,19 +76,24 @@ end
                     target_face, target_vertex, flat_target_vertex,...
                     source_intensity, target_intensity);
 if save_flag == 1
-    file_name = sprintf('%s_%s_%s_results.mat', datestr(now,'mm-dd-yyyy HH-MM'), source_name, target_name);
+    file_name = sprintf('%s_%s_%s_results_5landmark.mat', datestr(now,'mm-dd-yyyy HH-MM'), source_name, target_name);
     save(file_name);
     fprintf('Results saved !\n')
 end
-%%
+%% show results 
 clc; close all; 
-load('12-12-2019 11-43_test_right_0.obj_test_left_0.obj_results.mat');
+% use this one obtained previously if you do not want to run previous part 
+clear;
+load('12-13-2019 12-17_test_right_0.obj_test_left_0.obj_results_5landmark.mat');
+%
 result_show_3D(source_face, source_vertex, flat_source_vertex, source_vertex_reg,...
                     target_face, target_vertex, flat_target_vertex,...
                     source_intensity, target_intensity,...
                     landmark_source_index, landmark_target_index,...
                     source_vertex_reg_intersect_index, correspondence_mask, ...
                     source_vertex_reg_3D, source_face_reg, displace, dist,...
-                    target_intensity_reg, intensity_diff);
+                    target_intensity_reg, intensity_diff,...
+                    landmark_err, intensity_err);
 
+%%
 

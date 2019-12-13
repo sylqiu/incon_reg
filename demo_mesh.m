@@ -51,11 +51,17 @@ for iter = 1:param.overall_iter
                                 F2Vm, V2Fm, L, param);
     figure(31); gpp_plot_mesh(source_face, source_vertex_reg); title('Intensity matching step');
     drawnow;
+    %% calculate the landmark and intensity difference
+    le = compute_landamrk_err(source_vertex_reg, ...
+                        landmark_source_index,...
+                        landmark_target_pos);
+    fprintf('L1 norm intensity difference % f ', ie);
+    fprintf('Eulidean landmark difference % f \n', le);
+    landmark_err = [landmark_err, le];
+    intensity_err = [intensity_err, ie];
+    %%
     source_vertex_reg_pre = source_vertex_reg;
 end
 % algo ends
 %%
-result_show_3D(source_face, source_vertex, flat_source_vertex, source_vertex_reg,...
-                    target_face, target_vertex, flat_target_vertex,...
-                    source_intensity, target_intensity,...
-                    landmark_source_index, landmark_target_index)
+

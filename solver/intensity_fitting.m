@@ -1,4 +1,4 @@
-function [Tx,Ty] =  intensity_fitting(M,S,Niter,step_size, scale)
+function [Tx,Ty,intensity_err] =  intensity_fitting(M,S,Niter,step_size, scale)
 % assume S is already interpolated to the correct grid
 alpha=3;
 Tx=zeros(size(S)); Ty=zeros(size(S));
@@ -43,10 +43,16 @@ for itt=1:Niter
 
         figure(20);
 %             plot(Tx,Ty,'.');
-        subplot(1,2,1);imshow(M,'InitialMagnification', 800); title('Source intensity')
-        subplot(1,2,2);imshow(S,'InitialMagnification', 800); title('Target intensity')
+        subplot(1,3,1);imshow(M,'InitialMagnification', 800); title('Registered Source intensity');
+        subplot(1,3,2);imshow(S,'InitialMagnification', 800); title('Target intensity');
+%         subplot(1,3,3);imshow(imfuse(M,S,'blend','Scaling','joint'),'InitialMagnification',
+%         800); title('Align visualization');
+        subplot(1,3,3);imshow(abs(M-S),'InitialMagnification', 800); title('Registered intensity difference');
+        
         drawnow;        
 end
+intensity_err = sum(abs(M(:)-S(:)));
+
 % rescale to correct size
 Tx = Tx * scale;
 Ty = Ty *scale;
