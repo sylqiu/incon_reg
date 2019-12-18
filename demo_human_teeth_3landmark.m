@@ -98,5 +98,28 @@ result_show_3D(source_face, source_vertex, flat_source_vertex, source_vertex_reg
                     source_vertex_reg_3D, source_face_reg, displace, dist,...
                     target_intensity_reg, intensity_diff,...
                     landmark_err, intensity_err);
+%%
+param.position_cluster_strength = 0.2;
+param.num_cluster = 4;
+cluster_data = [displace, param.position_cluster_strength * flat_source_vertex];
+rng default;
+[cluster_label, clusters] = kmeans(cluster_data, param.num_cluster);
+figure(7); hold on;
+gpp_plot_mesh(source_face, source_vertex, cluster_label); colorbar; caxis([1,4]);
+cluster_direction = clusters(:, 1:3);
+cluster_direction = cluster_direction ./ sqrt(sum(cluster_direction.^2, 2));
+color_string_map = {'blue', 'shallow blue', 'green', 'yellow'};
+for cluster_id = 1:param.num_cluster
+    tmp_id = cluster_label == cluster_id;
+   
+    mean_dot_dist = mean(sum(cluster_data(tmp_id, 1:3).*cluster_direction(cluster_id,:),2));
+    fprintf('Cluster %d (%s) has mean dot-product distance %f \n', cluster_id, color_string_map{cluster_id}, mean_dot_dist);
+    tmp_xyz = source_vertex(tmp_id, :);
+    tmp_xyz = tmp_xyz(1:57:end,:);
+    tmp_dir = mean_dot_dist * cluster_direction(cluster_id,:);
+    tmp_dir = repmat(tmp_dir, [size(tmp_xyz,1), 1]);
+    quiver3(tmp_xyz(:,1), tmp_xyz(:,2), tmp_xyz(:,3), tmp_dir(:,1),  tmp_dir(:,2), tmp_dir(:,3));
+end
+hold off
 
 
