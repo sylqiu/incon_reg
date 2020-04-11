@@ -1,4 +1,4 @@
-clc; close all;
+clc; clear; close all;
 prefix = './data/HDM 2016_preprocessed/';
 source_name = 'MN-Rio-7724_M1223_aligned.mat';
 target_name = 'AMNH-M-38792_M904_aligned.mat';
@@ -42,17 +42,21 @@ fprintf('Eulidean landmark difference % f \n', initial_landmark_error);
 for iter = 1:param.overall_iter
     fprintf('Iter %d \n', iter);
     for l_iter = 1:param.landmark_iter
+        tic;
         source_vertex_reg_pre = reg_landmark(source_face, flat_source_vertex, source_vertex_reg_pre,...
                                     landmark_source_index, landmark_target_pos,...
                                     source_boundary_index, F2Vm, V2Fm, L, param);
-        figure(21); gpp_plot_mesh(source_face, source_vertex_reg_pre); title('Landmark matching step');
+        toc;
+%         figure(21); gpp_plot_mesh(source_face, source_vertex_reg_pre); title('Landmark matching step');
         drawnow;
     end
+    tic;
     [source_vertex_reg, ie] = reg_intensity(source_face, flat_source_vertex, source_vertex_reg_pre,...
                                 source_intensity, flat_target_vertex, target_intensity,...
                                 source_boundary_index, target_boundary_index,...
                                 F2Vm, V2Fm, L, param);
-    figure(31); gpp_plot_mesh(source_face, source_vertex_reg); title('Intensity matching step');
+toc;
+                            %     figure(31); gpp_plot_mesh(source_face, source_vertex_reg); title('Intensity matching step');
     drawnow;
     % calculate the landmark and intensity difference
     le = compute_landamrk_err(source_vertex_reg, ...

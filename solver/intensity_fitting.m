@@ -41,17 +41,17 @@ for itt=1:Niter
         D(:,:,2) = Ty;
         M = imwarp(initial_M,D);
 
-        figure(20);
+%         figure(20);
 %             plot(Tx,Ty,'.');
-        subplot(1,3,1);imshow(M,'InitialMagnification', 800); title('Registered Source intensity');
-        subplot(1,3,2);imshow(S,'InitialMagnification', 800); title('Target intensity');
+%         subplot(1,3,1);imshow(M,'InitialMagnification', 800); title('Registered Source intensity');
+%         subplot(1,3,2);imshow(S,'InitialMagnification', 800); title('Target intensity');
 %         subplot(1,3,3);imshow(imfuse(M,S,'blend','Scaling','joint'),'InitialMagnification',
 %         800); title('Align visualization');
-        subplot(1,3,3);imshow(abs(M-S),'InitialMagnification', 800); title('Registered intensity difference');
+%         subplot(1,3,3);imshow(abs(M-S),'InitialMagnification', 800); title('Registered intensity difference');
         
         drawnow;        
 end
-intensity_err = sum(abs(M(:)-S(:)));
+intensity_err = mean(abs(M(:)-S(:)).^2);
 
 % rescale to correct size
 Tx = Tx * scale;
