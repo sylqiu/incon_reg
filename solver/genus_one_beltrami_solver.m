@@ -1,4 +1,5 @@
 function map = genus_one_beltrami_solver(face, vertex, mu, corner_id, boundary_id, target_id, target_xy)
+mu = reshape(mu, [], 1);
 target_id = reshape(target_id, [], 1);
 corner_id = reshape(corner_id, [], 1);
 % build interior operator
